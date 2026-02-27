@@ -3,7 +3,7 @@ title: 'Markdown 模板'
 description: '这里需要写文章描述'
 publishDate: '2026-02-27'
 updatedDate: '2026-02-27'
-category: Tech
+category: Technical
 tags:
   - template
 heroImage:

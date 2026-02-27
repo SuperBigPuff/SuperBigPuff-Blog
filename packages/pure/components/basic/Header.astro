@@ -2,6 +2,28 @@
 import config from 'virtual:config'
 
 import { Icon } from '../user'
+
+import { getBlogCollection, getUniqueCategories } from '../../utils/server'
+
+const allPosts = await getBlogCollection()
+const allCategories = getUniqueCategories(allPosts)
+
+const categoryMap: Record<string, string> = {
+  Research: 'Research',
+  Technical: 'Technical',
+  Daily: 'Daily',
+  Essays: 'Essays'
+}
+
+const categoryOrder = ['Research', 'Technical', 'Daily', 'Essays']
+
+const normalizedCategories = allCategories.map((c) => c.toLowerCase())
+
+const categories = categoryOrder
+  .filter((c) => normalizedCategories.includes(c.toLowerCase()))
+  .map((c) => ({ slug: c, name: categoryMap[c] || c }))
+
+
 ---
 
 <header-component
@@ -20,9 +42,33 @@ import { Icon } from '../user'
       id='headerExpandContent'
       class='end-0 start-0 top-12 grid border border-transparent group-[.not-top]:rounded-xl group-[.expanded]:opacity-100 dark:group-[.expanded.not-top]:bg-muted max-sm:absolute max-sm:opacity-0 max-sm:group-[.not-top]:border-border max-sm:group-[.expanded.not-top]:bg-background max-sm:group-[.not-top]:px-4 max-sm:group-[.not-top]:py-2 sm:grid-rows-1'
     >
-      <div class='flex flex-col items-center justify-center overflow-hidden sm:flex-row'>
-        {
-          config.header.menu.map((item) => (
+      <div class='flex flex-col items-center justify-center max-sm:overflow-hidden sm:flex-row sm:overflow-visible'>
+      {
+        config.header.menu.map((item) => {
+          const isBlogMenu = item.title === 'Blog'
+          if (isBlogMenu && categories.length > 0) {
+            return (
+              <div class='menu-item-with-dropdown relative w-full sm:w-fit'>
+                <a
+                  href='/blog'
+                  class='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
+                  aria-label='Nav menu item'
+                >
+                  {item.title}
+                  <span class='ml-1 inline-block text-xs'>▾</span>
+                </a>
+
+                <div class='dropdown-menu'>
+                  {categories.map((category) => (
+                    <a class='category-link' href={`/blog/category/${category.slug}`}>
+                      {category.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+          return (
             <a
               href={item.link}
               class='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
@@ -30,8 +76,10 @@ import { Icon } from '../user'
             >
               {item.title}
             </a>
-          ))
-        }
+          )
+        })
+      }
+
         <div class='flex w-full grow flex-row justify-end gap-x-3 sm:w-fit sm:gap-x-5'>
           <a class='px-1 py-2 transition-none sm:px-2' href='/search' title='Search'>
             <span class='sr-only'>Search</span>
@@ -205,4 +253,61 @@ import { Icon } from '../user'
       }
     }
   }
+  .menu-item-with-dropdown { position: relative; }
+
+  .dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 11rem;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--background));
+    border-radius: 0.75rem;
+    padding: 0.35rem 0;
+    transform: translateY(-6px);
+    transition: all 0.2s ease;
+    z-index: 60;
+  }
+
+  .category-link {
+    display: block;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.9rem;
+  }
+  .category-link:hover {
+    color: hsl(var(--primary));
+    background: hsl(var(--muted));
+  }
+
+  @media (min-width: 640px) {
+    .menu-item-with-dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .dropdown-menu {
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      border: none;
+      background: transparent;
+      padding: 0;
+      min-width: 0;
+    }
+    .category-link {
+      text-align: right;
+      padding: 0.35rem 0;
+      opacity: 0.85;
+    }
+  }
+
 </style>
