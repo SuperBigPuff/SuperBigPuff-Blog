@@ -160,7 +160,7 @@ export const integ: IntegrationUserConfig = {
   waline: {
     enable: true,
     // Server service link
-    server: 'https://comments-fpjpnyc5h-puffs-projects-979999e2.vercel.app/',
+    server: 'waline.superbigpuff.top',
     // Show meta info for comments
     showMeta: false,
     // Refer https://waline.js.org/en/guide/features/emoji.html
