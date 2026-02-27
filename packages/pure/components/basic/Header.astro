@@ -319,6 +319,7 @@ const categories = categoryOrder
     }
     #headerExpandContent a {
       display: block;
+      -webkit-tap-highlight-color: transparent;
     }
     #headerExpandContent .menu-item-with-dropdown,
     #headerExpandContent .menu-item-with-dropdown > a,
@@ -350,6 +351,14 @@ const categories = categoryOrder
       text-align: right;
       padding: 0.35rem 0;
       opacity: 0.85;
+    }
+    .category-link:hover,
+    .category-link:active,
+    #headerExpandContent .menu-item-with-dropdown > a:hover,
+    #headerExpandContent .menu-item-with-dropdown > a:active,
+    #headerExpandContent > div > a:hover,
+    #headerExpandContent > div > a:active {
+      background: transparent;
     }
   }
 
