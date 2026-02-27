@@ -64,3 +64,21 @@ export function getUniqueTagsWithCount(collections: Collections): [string, numbe
     )
   ].sort((a, b) => b[1] - a[1])
 }
+
+export function getAllCategories(collections: Collections) {
+  return collections
+    .map((collection) => collection.data.category)
+    .filter((category): category is string => category !== undefined)
+}
+
+export function getUniqueCategories(collections: Collections) {
+  return [...new Set(getAllCategories(collections))]
+}
+
+export function getCollectionsByCategory<T extends CollectionKey>(
+  collections: CollectionEntry<T>[],
+  category: string
+) {
+  return collections.filter((collection) => collection.data.category === category)
+}
+
