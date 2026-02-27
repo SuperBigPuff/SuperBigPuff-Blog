@@ -58,13 +58,22 @@ const categories = categoryOrder
                   <span class='ml-1 inline-block text-xs'>▾</span>
                 </a>
 
-                <div class='dropdown-menu'>
+                <div class='dropdown-menu max-sm:hidden'>
                   {categories.map((category) => (
                     <a class='category-link' href={`/blog/category/${category.slug}`}>
                       {category.name}
                     </a>
                   ))}
                 </div>
+                <ul class='mobile-category-list sm:hidden'>
+                  {categories.map((category) => (
+                    <li>
+                      <a class='category-link' href={`/blog/category/${category.slug}`}>
+                        {category.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )
           }
@@ -303,6 +312,12 @@ const categories = categoryOrder
     color: hsl(var(--primary));
     background: hsl(var(--muted) / 0.55);
   }
+  .mobile-category-list {
+    display: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
   @media (min-width: 640px) {
     .menu-item-with-dropdown:hover .dropdown-menu {
@@ -336,6 +351,7 @@ const categories = categoryOrder
       width: 100%;
     }
     .dropdown-menu {
+      display: none !important;
       position: static;
       width: 100%;
       opacity: 1;
@@ -349,9 +365,19 @@ const categories = categoryOrder
       padding: 0;
       min-width: 0;
     }
-    :global(.dark) .dropdown-menu {
+    .mobile-category-list {
+      display: block;
+      width: 100%;
+    }
+    .mobile-category-list .category-link {
+      display: block;
+      width: 100%;
+      text-align: right;
+      padding: 0.35rem 0;
       background: transparent;
       border: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
     .category-link {
       text-align: right;
