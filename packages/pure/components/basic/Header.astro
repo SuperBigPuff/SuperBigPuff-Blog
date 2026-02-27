@@ -314,6 +314,20 @@ const categories = categoryOrder
   }
 
   @media (max-width: 639px) {
+    #headerExpandContent > div {
+      width: 100%;
+    }
+    #headerExpandContent .menu-item-with-dropdown,
+    #headerExpandContent .menu-item-with-dropdown > a,
+    #headerExpandContent > div > a {
+      width: 100%;
+    }
+    #headerExpandContent .menu-item-with-dropdown > a,
+    #headerExpandContent > div > a,
+    #headerExpandContent .category-link {
+      text-align: right;
+    }
+
     .menu-item-with-dropdown {
       width: 100%;
     }
