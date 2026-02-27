@@ -42,7 +42,7 @@ const categories = categoryOrder
       id='headerExpandContent'
       class='end-0 start-0 top-12 grid border border-transparent group-[.not-top]:rounded-xl group-[.expanded]:opacity-100 dark:group-[.expanded.not-top]:bg-muted max-sm:absolute max-sm:opacity-0 max-sm:group-[.not-top]:border-border max-sm:group-[.expanded.not-top]:bg-background max-sm:group-[.not-top]:px-4 max-sm:group-[.not-top]:py-2 sm:grid-rows-1'
     >
-      <div class='flex flex-col items-center justify-center max-sm:overflow-hidden sm:flex-row sm:overflow-visible'>
+      <div class='flex flex-col items-center justify-center max-sm:w-full max-sm:items-stretch max-sm:overflow-hidden sm:flex-row sm:overflow-visible'>
       {
         config.header.menu.map((item) => {
           const isBlogMenu = item.title === 'Blog'
@@ -314,8 +314,12 @@ const categories = categoryOrder
   }
 
   @media (max-width: 639px) {
+    .menu-item-with-dropdown {
+      width: 100%;
+    }
     .dropdown-menu {
       position: static;
+      width: 100%;
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
