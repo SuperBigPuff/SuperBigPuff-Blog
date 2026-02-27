@@ -1,0 +1,137 @@
+﻿---
+title: '2026 绝区零音乐会'
+description: '这是一个 mdx 模板示例，展示了如何使用 Astro Pure 组件和一些常见的 mdx 功能。'
+publishDate: '2026-02-27'
+updatedDate: '2026-02-27'
+category: Daily
+tags:
+  - Concert
+heroImage:
+  src: './ZZZ.jpg'
+  alt: '文章封面'
+  color: '#B4C6DA'
+draft: false
+language: 'zh-CN'
+comment: true
+---
+
+import {
+  Aside, Tabs, TabItem, Steps, MdxRepl, Card, Collapse, CardList, Timeline,
+  Button, Spoiler, FormattedDate, Label, Svg, Icon
+} from 'astro-pure/user'
+import { Quote, GithubCard, LinkPreview, QRCode, MediumZoom } from 'astro-pure/advanced'
+import { Icons as allIcons } from 'astro-pure/libs'
+import { Comment } from '@/components/waline'
+import { Code } from 'astro:components'
+import { Image } from 'astro:assets'
+import myImage from './ZZZ.jpg'
+
+export const cardListData = [
+  { title: '文档链接', link: '/docs' },
+  { title: '二级目录', children: [{ title: '子项', link: '/docs/integrations/components' }] }
+]
+
+export const timelineData = [
+  { date: '2026-02-20', content: '开始写作' },
+  { date: '2026-02-27', content: '发布文章' }
+]
+
+# 小组件
+
+## Github风格的框
+
+<Aside type='tip' title='Tips'>
+Here is a tip for you.
+</Aside>
+
+<Aside type='caution' title='Warning'>
+Warning occurs!
+</Aside>
+
+<Aside type='danger' title='Danger'>
+Do not do this!
+</Aside>
+
+## Card
+<Card as='a' href='#' heading='卡片标题' subheading='卡片副标题' date='Feb 2026'>
+跳转到文章开头的卡片
+</Card>
+
+你好啊
+
+<Card as='a' heading='卡片标题' subheading='卡片副标题' date='Feb 2026'>
+不跳转
+</Card>
+
+
+## 折叠标签
+<Collapse title='这里可以写不想让人看到的内容'>
+Hello, this is some hidden content that can be revealed by clicking the title.
+</Collapse>
+
+## 标签页
+<Tabs>
+  <TabItem label='标签一'>这里是标签一内容</TabItem>
+  <TabItem label='标签二'>这里是标签二内容</TabItem>
+</Tabs>
+
+## 步骤
+
+<Steps>
+1. 第一步
+2. 第二步
+3. 第三步
+</Steps>
+
+## 时间轴
+<Timeline
+  events={[
+    { date: '2026-02-20', content: '开始写作' },
+    { date: '2026-02-27', content: '发布文章' }
+  ]}
+/>
+
+
+## 引用和批注
+>hello
+
+<MdxRepl width='100%'>
+<p>小批注</p>
+</MdxRepl>
+
+## 按钮
+<div class='flex gap-2'>
+  <Button as='a' title='前进按钮' variant='ahead' />
+  <Button as='div' title='返回按钮' variant='back' />
+  <Button as='div' title='胶囊按钮' variant='pill' />
+</div>
+
+## 剧透
+<Spoiler>这是剧透文本</Spoiler>
+
+## Advanced 组件
+
+显示语录
+<Quote /> 
+展示Github的仓库
+<GithubCard repo='cworld1/astro-theme-pure' />
+展示一个链接
+<LinkPreview href='https://www.cloudflare.com/' hideMedia />
+展示二维码
+<QRCode content='https://github.com' class='inline-flex max-w-44 p-3 bg-muted rounded-lg border' />
+
+## 图片与代码
+
+![插入图片](./ZZZ.jpg)
+
+<Code lang='bash' code={`echo "hello mdx"`} />
+
+```bash title="deploy.sh"
+bun check
+bun dev # [!code highlight]
+```
+
+```diff
+-bun run build # [!code --]
++bun format    # [!code ++]
+```
