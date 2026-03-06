@@ -2,9 +2,9 @@
 layout: '@/layouts/IndividualPage.astro'
 
 title: 'Copyright'
-description: 'Effective date: 2024-11-26'
+description: 'Effective date: 2026-03-06'
 language: 'En'
 back: '/terms/list'
 ---
 
-It may be recommended to generate policies from [PolicyMaker.io](https://policymaker.io).
+No content!

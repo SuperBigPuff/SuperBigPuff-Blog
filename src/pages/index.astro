@@ -20,7 +20,7 @@ const languages = ['C', 'C++', 'Python', 'Verilog', 'SystemVerilog', 'Shell']
 const frontend = ['TypeScript', 'Vite', 'Webpack', 'Astro']
 const backend = ['Vercel', 'Waline']
 
-const MAX_POSTS = 10
+const MAX_POSTS = 5
 const allPosts = await getBlogCollection()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
@@ -56,17 +56,25 @@ if (!images[imagePath])
             <Icon name='location' class='size-5' slot='icon' />
           </Label>
           <Label
-            title='Source code'
+            title='Github'
             as='a'
-            href='https://github.com/cworld1/astro-theme-pure'
+            href='https://github.com/SuperBigPuff'
             target='_blank'
           >
             <Icon name='github' class='size-5' slot='icon' />
           </Label>
+          <Label
+            title='Email'
+            as='a'
+            href='mailto:superbigpuff@gmail.com'
+            target='_blank'
+          >
+            <Icon name='email' class='size-5' slot='icon' />
+          </Label>
         </div>
       </div>
 
-      {/* Get template */}
+      <!-- {/* Get template */}
       <a
         href='https://github.com/cworld1/astro-theme-pure'
         target='_blank'
@@ -79,14 +87,14 @@ if (!images[imagePath])
           <span class='size-2 rounded-full bg-green-400'></span>
         </span>
         <p class='font-medium text-muted-foreground'>Get Template</p>
-      </a>
+      </a> -->
     </section>
 
     <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
       <Section title='About'>
         <p class='text-muted-foreground'>Student</p>
         <p class='text-muted-foreground'>
-          我是一名西安电子科技大学电子工程学院23级的本科生，专业是电子信息工程。我会分享自己看到的一些有趣内容以及生活记录等。
+          我是一名西安电子科技大学电子工程学院23级的本科生，专业是电子信息工程。目前我正在上海交通大学进行科研实习，进行一些智能计算架构方面的研究。我会分享自己看到的一些有趣内容以及生活记录等。
           Feel free to contact me!
         </p>
         <Button title='More about me' class='w-fit self-end' href='/about' variant='ahead' />
