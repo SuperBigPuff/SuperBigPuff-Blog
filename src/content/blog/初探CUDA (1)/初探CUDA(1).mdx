@@ -1,0 +1,122 @@
+﻿---
+title: '初探CUDA (1)'
+description: '最近想学习一下CUDA，这篇文章作为一个开头。'
+publishDate: '2026-05-05'
+updatedDate: '2026-05-05'
+category: Technical
+tags:
+  - template
+heroImage:
+  src: './rossy.png'
+  alt: '文章封面'
+  color: '#B4C6DA'
+draft: false
+language: 'zh-CN'
+comment: true
+---
+
+import {
+  Aside, Tabs, TabItem, Steps, MdxRepl, Card, Collapse, CardList, Timeline,
+  Button, Spoiler, FormattedDate, Label, Svg, Icon
+} from 'astro-pure/user'
+import { Quote, GithubCard, LinkPreview, QRCode, MediumZoom } from 'astro-pure/advanced'
+import { Icons as allIcons } from 'astro-pure/libs'
+import { Comment } from '@/components/waline'
+import { Code } from 'astro:components'
+import { Image } from 'astro:assets'
+import myImage from './rossy.png'
+
+export const cardListData = [
+  { title: '文档链接', link: '/docs' },
+  { title: '二级目录', children: [{ title: '子项', link: '/docs/integrations/components' }] }
+]
+
+export const timelineData = [
+  { date: '2026-02-20', content: '开始写作' },
+  { date: '2026-02-27', content: '发布文章' }
+]
+
+## 整体架构
+
+<Aside type='tip' title='Tips'>
+目前的模型计算达到了非常大的计算量。GPU作为原先的图形处理单元，现在被作为一种并行数据计算芯片，用于计算密度大、并行度高的大规模计算。
+</Aside>
+
+![1](./1.png)
+
+与CPU不同，GPU的控制逻辑较少，GPU的一行可以看作一个单元，这个单元叫做SM（Streaming Multiprocessor，流式多处理器）。
+一个SM基本由以下几个单元构成
+
+- CUDA Core：负责MAC计算，可以理解为GPU中的ALU
+- SFU：负责进行特殊运算，如三角运算等
+- LD/ST（Load/Store）单元：负责内存加载和存储
+- Warp Scheduler：warp是线程的集合，通常是一组32个。在一个SM中，通常驻留了很多warp，Warp Scheduler复杂挑选出可以执行的Warp，交给Dispatch Unit
+- Dispatch Unit：负责将一个Warp分给具体的单元（CUDA Cores、LD/ST 或 SFU）执行
+
+![2](./5.png)
+
+## 自底向上
+一般来说，非CPU的加速计算资源，都有一套配套的运行环境。自底向上，分别是
+```bash
+硬件本身 --> Driver --> Runtime --> Libraries
+```
+一般来说暴露给开发人员的都是Runtime和Libraries这两层
+
+## 线程的分层与管理
+
+![3](./4.png)
+
+在GPU中，由于运用了超线程技术，需要对大量的线程进行管理，因此在启动一个kernel的时候，会对其中的thread进行分层
+
+具体而言，多个threads组成一个线程块（Thread Block），然后多个线程块组成一个网格（Grid）
+
+需要注意的是，在执行过程中，同一个Thread内的线程，都会在同一个SM上执行。
+
+分好Thread Block后，会像之前说到的，一个Thread Block内的线程按照线程束（warp）分块，统一移到一个单元内执行，这时所有的线程执行的都是相同的指令
+由于线程很多，调度器可以保证每个时刻，都有warp送到相应的资源中去计算或者访存，因此可以实现GPU的不空闲
+
+## 内存层级
+<Aside type='tip' title='Tips'>
+与CPU类似，GPU也有一定的内存层级
+</Aside>
+
+![4](./3.png)
+
+具体而言，可以主要分为三类
+- Register File：由每个Thread拥有，线程结束后寄存器中的数据就会消失
+- Shared Memory：由一个Thread Block所共享的资源
+- Global Memory：片外，显卡的显存，整个Grid均可访问
+
+![5](./2.png)
+
+由于主机（Host）和从机（Device）相互的内存空间不共享，因此需要在GPU中先申请内存空间，然后再把CPU中的数据拷贝过去。
+```C++
+cudaError_t cudaMalloc(void** devPtr, size_t count);
+```
+其中devPtr在使用时，一般需要使用`void**`的强制类型转换转换为对应的输入
+如
+```c++
+cudaMalloc((void **)&d_a, size);
+```
+双指针需要取指针的地址，因此是`&d_a`
+这里申请`size_t`个字节的全局显存
+```C++
+cudaError_t cudaFree(void* devPtr);
+```
+这里释放显存
+```C++
+cudaError_t cudaMemcpy(void* dst, const void* src, size_t count, cudaMemcpyKind kind);
+```
+这里完成数据的拷贝
+`cudaMemcpyKind kind`一共有四种，分别是
+- `cudaMemcpyHostToHost`：主机 → 主机
+- `cudaMemcpyHostToDevice`：主机 → 设备
+- `cudaMemcpyDeviceToDevice`：设备 → 设备
+- `cudaMemcpyDeviceToHost`：设备 → 主机
+## 共享显存和全局显存的使用
+若没有明确分配共享显存的空间，默认使用的是全局显存
+```c++
+__shared__ int smem[256];
+```
+可以使用该方式分配共享显存。需要注意的是，共享显存为一个SM处理器所占有，因此在运用时需要注意开的大小和Block内的线程数量需要进行对齐
+
