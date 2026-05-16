@@ -1,0 +1,381 @@
+﻿---
+title: '在 WSL 2 中配置 Synopsys 工具'
+description: '详细介绍在 WSL 2 环境中配置和使用 Synopsys 工具的步骤和注意事项'
+publishDate: '2026-05-17'
+updatedDate: '2026-05-17'
+category: Technical
+tags:
+  - EDA
+heroImage:
+  src: './WSL2Synopsys.jpg'
+  alt: '文章封面'
+  color: '#B4C6DA'
+draft: false
+language: 'zh-CN'
+comment: true
+---
+
+import {
+  Aside, Tabs, TabItem, Steps, MdxRepl, Card, Collapse, CardList, Timeline,
+  Button, Spoiler, FormattedDate, Label, Svg, Icon
+} from 'astro-pure/user'
+import { Quote, GithubCard, LinkPreview, QRCode, MediumZoom } from 'astro-pure/advanced'
+import { Icons as allIcons } from 'astro-pure/libs'
+import { Comment } from '@/components/waline'
+import { Code } from 'astro:components'
+import { Image } from 'astro:assets'
+import myImage from './WSL2Synopsys.jpg'
+
+export const cardListData = [
+  { title: '文档链接', link: '/docs' },
+  { title: '二级目录', children: [{ title: '子项', link: '/docs/integrations/components' }] }
+]
+
+export const timelineData = [
+  { date: '2026-05-17', content: '开始写作' },
+  { date: '2026-05-17', content: '发布文章' }
+]
+
+## 前言
+
+由于没有商用的Synopsys的license，在之前的使用中都是使用预装Synopsys的虚拟机进行仿真和综合。然而问题是，虚拟机的性能利用非常低，同样一个项目，对比在windows系统下使用vivado等工具进行仿真或综合，虚拟机的需要耗费的时间极多，而且虚拟机的GUI大多非常难看，不如VSCode。因此打算在WSL 2中进行Synopsys工具的配置。
+
+## 选型
+
+我的想法是需要有一个能用VSCode中Romote - WSL插件连接到的Linux发行版，查阅[VSCode文档](https://code.visualstudio.com/docs/remote/linux)得知对版本有一定的限制。
+
+![文档](./fig1.png)
+
+对EDA工具来说，支持比较好的一般是CentOS。然而听说Synopsys的较旧版本（我手头能拿到的版本）往往对CentOS有一些限制（而且我也不熟悉这个），因此我选择了Ubuntu20.04。
+
+下面附上完整的各种版本
+
+```bash
+Windows 11
+WSL2
+Ubuntu 20.04.6 LTS
+VS Code Remote - WSL
+Synopsys 2018:
+  SCL 2018.06
+  VCS O-2018.09-SP2
+  Verdi O-2018.09-SP2
+  Design Compiler O-2018.06-SP1
+```
+## WSL 2 安装
+
+Windows11似乎不能直接下载20.04的版本，且下载后也需要迁移盘不然C盘会被占满，因此选择[下载镜像](https://releases.ubuntu.com/focal/)然后安装的方式。
+x86_64选择[ubuntu-20.04.6-wsl-amd64.wsl](https://releases.ubuntu.com/focal/ubuntu-20.04.6-wsl-amd64.wsl)即可
+
+在安装时，我的习惯是把镜像和系统分开装
+
+```bash
+EDA-Tools
+	- images
+	- OS
+```
+
+安装命令如下
+
+```bash
+wsl --import [取一个WSL2名字] [OS文件夹路径] [镜像文件路径] --version 2
+```
+
+随后启动，我的叫Ubuntu20.04-EDA
+
+```bash
+wsl -d Ubuntu20.04-EDA
+```
+
+## 初步配置
+
+首先换apt源，当然也可以给虚拟机换一个代理。
+
+换源的方法参考[清华大学开源软件镜像站](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)
+
+这里面没有20.04的版本了，这边贴出我的配置
+
+```txt
+# Ubuntu 20.04 LTS
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse  
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-updates main restricted universe multiverse  
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-backports main restricted universe multiverse  
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted universe multiverse  
+  
+# 源码包，一般不用，先注释掉  
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse  
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-updates main restricted universe multiverse  
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-backports main restricted universe multiverse  
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted universe multiverse  
+```
+
+随后更新下就行
+
+```bash
+source ~/.bashrc
+```
+
+换源后就可以安装依赖
+
+```bash
+sudo apt install -y \
+  build-essential make gcc g++ gcc-multilib g++-multilib \
+  vim nano wget curl unzip tar gzip bzip2 file \
+  csh ksh tcsh net-tools iproute2 lsb-release \
+  x11-apps mesa-utils \
+  libx11-6 libxext6 libxi6 libxrender1 libxtst6 libxss1 \
+  libxft2 libxmu6 libxpm4 libxrandr2 libgtk2.0-0 \
+  libncurses5 libtinfo5 \
+  libcanberra-gtk-module libcanberra-gtk3-module \
+  fontconfig xfonts-base xfonts-75dpi xfonts-100dpi
+```
+
+在其他教程中需要的`libnsl2`这个库可能无法安装，因此后面的图形化界面也无法安装，但是后续发现这个库不影响的
+
+接着安装图形化界面库
+
+```bash
+sudo apt install -y x11-apps mesa-utils xterm
+```
+
+## 修改dash
+Ubuntu默认的terminal行为是dash，但是Synopsys需要接近bash的行为，因此需要修改
+
+```bash
+echo "dash dash/sh boolean false" | sudo debconf-set-selections
+sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+```
+
+验证一下
+
+```bash
+ls -l /bin/sh
+```
+
+期望会输出
+
+```bash
+/bin/sh -> bash
+```
+
+## 安装MobaXterm
+
+Synopsys的安装是GUI界面的，然而VSCode对虚拟环境GUI的支持是个老毛病了，因此这里选择使用[MobaXterm](https://mobaxterm.mobatek.net/)。随后GUI的安装界面都用这个执行。
+
+## 安装包准备
+
+到这里 WSL2 的环境基本配置完成，接下来开始准备Synopsys的安装包。
+
+[这篇文章](https://zhuanlan.zhihu.com/p/332589990)里有Synopsys2018的安装包。
+
+下载解压后，把安装包迁移到WSL 2中，对于WSL 2，windows端的磁盘对它是一个挂载路径，例如`/mnt/f/Synopsys/Synopsys2018/synopsysinstaller_v5.0.rar`
+
+几个软件分别是
+
+- 下载器：synopsysinstaller_v5.0.rar
+- vcs：vcs_vO-2018.09-SP2
+- dc：syn_vO-2018.06-SP1
+- verdi：verdi-2018.09
+- scl：scl_v2018.06
+
+使用`cp -av`指令复制到虚拟机的路径下。推荐所有安装包在`~/`目录下，安装的软件在`/opt/synopsys`目录下。
+
+```bash
+mkdir -p ~/eda/synopsys/installer
+```
+
+```bash
+sudo mkdir -p /opt/synopsys
+```
+
+## 运行 Synopsys Installer
+
+解压installer后，cd进目录后，给权限进行安装
+
+```bash
+cd ~/eda/synopsys/installer/synopsysinstaller_v5.0
+chmod +x SynopsysInstaller_v5.0.run
+./SynopsysInstaller_v5.0.run
+```
+
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+最好按这个顺序进行安装
+
+```bash
+1. SCL 2018.06
+2. VCS O-2018.09-SP2
+3. Verdi O-2018.09-SP2
+4. DC O-2018.06-SP1
+```
+
+具体安装的流程，怎么选择路径参考这篇文章，其中需要选择的第一个路径是安装包路径，第二个是软件安装目录，就是opt那个
+
+## 配置license
+
+依旧参考[这篇文章](https://zhuanlan.zhihu.com/p/332589990)
+
+其中需要注意的是，用户名一般会发生变化，不是文中说的`localhost.localdomain`
+
+这一步我也不是很确定，建议配置一下IP文件，否则后面license很可能对不上
+
+```bash
+sudo cp /etc/hosts /etc/hosts.bak
+sudo nano /etc/hosts
+```
+
+配置成类似如下形式
+
+```bash
+127.0.0.1       localhost localhost.localdomain
+127.0.1.1       Puff Puff.localdomain
+
+# The following lines are desirable for IPv6 capable hosts
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+```
+
+替换下用户名即可，但是这样替换后可能会导致VSCode的WSL服务连不上，为此需要shutdown一个开机服务
+
+编辑`/etc/wsl.conf`文件，将其中内容改为
+
+```bash
+[network]
+generateHosts = false
+
+[user]
+default = puff
+```
+
+即删除systemd服务，随后按照文中内容生成license即可
+
+## 配置环境变量
+
+这一步的目的是为了让系统知道软件在哪，并且配置license启动
+
+编辑`~/.bashrc`，在里面添加如下内容
+
+```bash
+# ================= Synopsys 2018 =================
+
+export SYNOPSYS_ROOT=/opt/synopsys
+
+# VCS / DVE
+export VCS_HOME=$SYNOPSYS_ROOT/vcs/O-2018.09-SP2
+export VCS_MX_HOME=$SYNOPSYS_ROOT/vcs-mx/O-2018.09-SP2
+export DVE_HOME=$VCS_HOME
+
+# Verdi
+export VERDI_HOME=$SYNOPSYS_ROOT/verdi/Verdi_O-2018.09-SP2
+
+# SCL
+export SCL_HOME=$SYNOPSYS_ROOT/scl/2018.06
+
+# Design Compiler
+export DC_HOME=$SYNOPSYS_ROOT/syn/O-2018.06-SP1
+
+# PATH
+export PATH=$SCL_HOME/linux64/bin:$VCS_HOME/bin:$VCS_HOME/gui/dve/bin:$VERDI_HOME/bin:$DC_HOME/bin:$PATH
+
+# Library path
+export LD_LIBRARY_PATH=$VERDI_HOME/share/PLI/VCS/LINUX64:$VCS_HOME/linux64/lib:$LD_LIBRARY_PATH
+
+# Compatibility
+export VCS_ARCH_OVERRIDE=linux
+
+# License
+export LM_LICENSE_FILE=27000@Puff
+export SNPSLMD_LICENSE_FILE=$LM_LICENSE_FILE
+
+# Manual license control
+alias start-eda='lmgrd -c /opt/synopsys/scl/2018.06/admin/license/Synopsys.dat -l ~/lmgrd.log'
+alias lms_synopsys='lmstat -a -c 27000@Puff'
+alias lmk_synopsys='pkill -f lmgrd; pkill -f snpslmd'
+
+# =================================================
+```
+
+其中`start-eda`是我启动license的命令，可以修改
+
+以后启动时只需要在terminal输入
+
+```
+start-eda
+```
+
+即可挂起license进行启动
+
+## Toolchain依赖
+
+VCS和DC在使用时会缺一些库，且是老版本的（没办法，系统和软件不兼容的老问题了），但是可以通过一些方法解决
+
+### VCS
+
+vcs初次启动遇到这个问题
+
+```bash
+/opt/synopsys/vcs/O-2018.09-SP2/bin/vcs: line 3312: dc: command not found
+```
+
+解决
+
+```bash
+sudo apt install -y dc
+```
+
+同时在日志中会出现大量
+
+```bash
+/usr/bin/ld: ... undefined reference to ...
+collect2: error: ld returned 1 exit status
+```
+
+这是Ubuntu 20.04无法链接simv，在编译时加一些编译选项即可
+
+```bash
+-LDFLAGS "-Wl,--no-as-needed"
+```
+
+### Verdi
+
+Verdi缺一个库`libpng12.so.0`
+
+使用如下命令安装
+
+```bash
+cd /tmp
+wget http://security.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb
+sudo dpkg -i libpng12-0_1.2.54-1ubuntu1.1_amd64.deb
+```
+
+### DC
+
+DC缺库`libtiff.so.3`和`libmng.so.1`
+
+分别使用如下解决，简历软链接
+
+```bash
+sudo apt install -y libtiff5
+sudo ln -sf /usr/lib/x86_64-linux-gnu/libtiff.so.5 /usr/lib/x86_64-linux-gnu/libtiff.so.3
+sudo ldconfig
+```
+
+```bash
+sudo apt install -y libmng2
+sudo ln -sf /usr/lib/x86_64-linux-gnu/libmng.so.2 /usr/lib/x86_64-linux-gnu/libmng.so.1
+sudo ldconfig
+```
+
+## 开始使用
+
+所有安装步骤都已经完成了，检查下vcs，dc和verdi是否能正常使用
+
+推荐安装
+
+- Digital HDL 插件，用于代码高亮
+- Codex/Copilot，帮助你解决本文中可能没有提到的问题
