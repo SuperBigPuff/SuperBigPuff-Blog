@@ -1,0 +1,138 @@
+---
+title: 'MDX Template'
+description: 'An MDX template demonstrating Astro Pure components and common MDX features.'
+publishDate: '2026-02-27'
+updatedDate: '2026-02-27'
+category: Technical
+tags:
+  - template
+heroImage:
+  src: './template.jpg'
+  alt: 'MDX template cover image'
+  color: '#B4C6DA'
+draft: false
+lang: en
+language: 'en-US'
+translationKey: 'mdx-template'
+slug: 'mdx-template'
+comment: true
+---
+
+import {
+  Aside, Tabs, TabItem, Steps, MdxRepl, Card, Collapse, Timeline,
+  Button, Spoiler
+} from 'astro-pure/user'
+import { Quote, GithubCard, LinkPreview, QRCode } from 'astro-pure/advanced'
+import { Code } from 'astro:components'
+
+# Components
+
+## GitHub-Style Asides
+
+<Aside type='tip' title='Tips'>
+Here is a tip for you.
+</Aside>
+
+<Aside type='caution' title='Warning'>
+Something requires your attention.
+</Aside>
+
+<Aside type='danger' title='Danger'>
+Do not do this.
+</Aside>
+
+## Cards
+
+<Card as='a' href='#' heading='Card Title' subheading='Card Subtitle' date='Feb 2026'>
+This card links back to the beginning of the post.
+</Card>
+
+Hello!
+
+<Card as='a' heading='Card Title' subheading='Card Subtitle' date='Feb 2026'>
+This card has no link.
+</Card>
+
+## Collapsible Content
+
+<Collapse title='Content hidden by default'>
+Hello, this content can be revealed by clicking the title.
+</Collapse>
+
+## Tabs
+
+<Tabs>
+  <TabItem label='Tab One'>Content for the first tab.</TabItem>
+  <TabItem label='Tab Two'>Content for the second tab.</TabItem>
+</Tabs>
+
+## Steps
+
+<Steps>
+1. First step
+2. Second step
+3. Third step
+</Steps>
+
+## Timeline
+
+<Timeline
+  events={[
+    { date: '2026-02-20', content: 'Writing started' },
+    { date: '2026-02-27', content: 'Post published' }
+  ]}
+/>
+
+## Quotes and Annotations
+
+> Hello
+
+<MdxRepl width='100%'>
+<p>A short annotation.</p>
+</MdxRepl>
+
+## Buttons
+
+<div class='flex gap-2'>
+  <Button as='a' title='Forward' variant='ahead' />
+  <Button as='div' title='Back' variant='back' />
+  <Button as='div' title='Pill' variant='pill' />
+</div>
+
+## Spoilers
+
+<Spoiler>This is spoiler text.</Spoiler>
+
+## Advanced Components
+
+Display a quotation:
+
+<Quote />
+
+Display a GitHub repository:
+
+<GithubCard repo='cworld1/astro-theme-pure' />
+
+Display a link preview:
+
+<LinkPreview href='https://www.cloudflare.com/' hideMedia />
+
+Display a QR code:
+
+<QRCode content='https://github.com' class='inline-flex max-w-44 p-3 bg-muted rounded-lg border' />
+
+## Images and Code
+
+![Example image](./template.jpg)
+
+<Code lang='bash' code={`echo "hello mdx"`} />
+
+```bash title="deploy.sh"
+bun check
+bun dev # [!code highlight]
+```
+
+```diff
+-bun run build # [!code --]
++bun format    # [!code ++]
+```

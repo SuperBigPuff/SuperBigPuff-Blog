@@ -2,7 +2,7 @@
 import { BackToTop } from 'astro-pure/components/pages'
 import type { SiteMeta } from 'astro-pure/types'
 import { Button, Icon } from 'astro-pure/user'
-import { cn } from 'astro-pure/utils'
+import { cn, getLocaleFromPathname, ui, withLocale } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ } from '@/site-config'
 
@@ -12,11 +12,12 @@ interface Props {
   back?: string
 }
 
-const { meta, highlightColor, back = '/', ...props } = Astro.props
+const locale = getLocaleFromPathname(Astro.url.pathname)
+const { meta, highlightColor, back = withLocale('/', locale), ...props } = Astro.props
 ---
 
 <PageLayout {meta} {highlightColor} {...props}>
-  <Button title='Back' href={back} variant='back' />
+  <Button title={ui[locale].common.back} href={back} variant='back' />
   <main class='mt-6 items-start gap-x-10 md:flex'>
     {/* Sidebar */}
     <aside

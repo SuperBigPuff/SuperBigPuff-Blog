@@ -1,0 +1,60 @@
+---
+import links from 'public/links.json'
+
+import { Collapse, Timeline } from 'astro-pure/user'
+import config from 'virtual:config'
+import PageLayout from '@/layouts/CommonPage.astro'
+import FriendList from '@/components/links/FriendList.astro'
+
+const headings = [
+  { depth: 2, slug: 'common-links', text: 'Common Links' },
+  { depth: 2, slug: 'special-links', text: 'Special Links' },
+  { depth: 2, slug: 'apply-links', text: 'Apply for a Link' }
+]
+
+const { friends } = links
+const linksConf = config.integ.links
+const linkEditPage = 'https://github.com/SuperBigPuff/SuperBigPuff-Blog/blob/main/public/links.json'
+---
+
+<PageLayout title='Links' {headings} comment>
+  <p>Links are displayed in a random order.</p>
+  <h2 id='common-links'>Common Links</h2>
+  <FriendList list={friends[0]} />
+  <Collapse title='Links with an Inactive Status'>
+    <FriendList list={friends[1]} />
+  </Collapse>
+  <Collapse title='Link History'>
+    <Timeline events={linksConf.logbook} />
+  </Collapse>
+
+  <h2 id='special-links'>Special Links</h2>
+  <FriendList list={friends[2]} />
+
+  <h2 id='apply-links'>Apply for a Link</h2>
+  <p>Site information (click a value to copy it):</p>
+  <blockquote class='not-prose grid grid-cols-[auto_1fr] gap-x-2 break-words border-s-4 ps-4'>
+    {
+      linksConf.applyTip.map(({ name, val }) => {
+        const script = `navigator.clipboard.writeText('${val}');document.dispatchEvent(new CustomEvent('toast',{detail:{message:'Copied "${val}" to clipboard!'}}))`
+        return (
+          <>
+            <span class='text-end'>{name}:</span>
+            <samp class='cursor-pointer' onclick={script}>{val}</samp>
+          </>
+        )
+      })
+    }
+  </blockquote>
+
+  <p>
+    Apply by leaving a comment below or <a href={linkEditPage} target='_blank'>submitting a pull request</a
+    >. Please make sure that:
+  </p>
+  <ul>
+    <li>You have added a link to this site on your website.</li>
+    <li>Your website is active and uses a proper domain.</li>
+    <li>It contains at least five original posts and has been updated within the past year.</li>
+    <li>Its content complies with applicable laws.</li>
+  </ul>
+</PageLayout>

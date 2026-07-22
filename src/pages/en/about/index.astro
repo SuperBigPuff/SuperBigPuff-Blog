@@ -1,0 +1,126 @@
+---
+import { Button, Timeline } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+import ToolSection from '@/components/about/ToolSection.astro'
+
+const headings = [
+  { depth: 2, slug: 'hobbies', text: 'Hobbies' },
+  { depth: 2, slug: 'tools', text: 'Tools' },
+  { depth: 2, slug: 'about-blog', text: 'About Blog' }
+]
+---
+
+<PageLayout title='About' {headings} comment>
+  <p>Student</p>
+  <p>
+    I am an undergraduate student in the School of Electronic Engineering at Xidian University,
+    majoring in Electronic Information Engineering. I am currently a research intern at Shanghai
+    Jiao Tong University, working on intelligent computing architectures. I use this blog to share
+    technical notes, interesting things I encounter, and moments from everyday life.
+  </p>
+  <p>Motto: Stay focused, Stay alive.</p>
+  <Button title='View my projects' class='w-fit' href='/en/projects' variant='ahead' />
+
+  <h2 id='hobbies'>Hobbies</h2>
+  <ul>
+    <li>Computer architecture and hardware acceleration.</li>
+    <li>Music, concerts, and games.</li>
+    <li>Writing down ideas before they disappear.</li>
+  </ul>
+
+  <h2 id='tools'>Tools</h2>
+  <p>Tools I currently use:</p>
+  <ToolSection
+    class='mb-5'
+    title='Productivity'
+    tools={[
+      {
+        name: 'Chrome',
+        description: 'Browser',
+        href: 'https://www.google.com/chrome/',
+        icon: import('@/assets/tools/chrome.svg?raw')
+      },
+      {
+        name: 'Notion',
+        description: 'Note Taking',
+        href: 'https://www.notion.so/',
+        icon: import('@/assets/tools/notion.svg?raw')
+      },
+      {
+        name: 'Typora',
+        description: 'Markdown Editor',
+        href: 'https://typora.io/',
+        icon: import('@/assets/tools/typora.svg?raw')
+      }
+    ]}
+  />
+  <ToolSection
+    class='mb-5'
+    title='Development'
+    tools={[
+      {
+        name: 'VS Code',
+        description: 'IDE',
+        href: 'https://code.visualstudio.com/',
+        icon: import('@/assets/tools/vscode.svg?raw')
+      },
+      {
+        name: 'Sublime Text',
+        description: 'IDE',
+        href: 'https://www.sublimetext.com/',
+        icon: import('@/assets/tools/sublime.svg?raw')
+      }
+    ]}
+  />
+  <ToolSection
+    class='mb-5'
+    title='Environment'
+    tools={[
+      {
+        name: 'Ubuntu 22.04 LTS',
+        description: 'Linux Distribution',
+        href: 'https://ubuntu.com/',
+        icon: import('@/assets/tools/ubuntu.svg?raw')
+      },
+      {
+        name: 'macOS Tahoe',
+        description: 'MacBook Air',
+        href: 'https://www.apple.com/macos/',
+        icon: import('@/assets/tools/apple.svg?raw')
+      },
+      {
+        name: 'Windows 11',
+        description: 'Framework Laptop 16',
+        href: 'https://news.microsoft.com/windows11-general-availability/',
+        icon: import('@/assets/tools/windows11.svg?raw')
+      }
+    ]}
+  />
+
+  <h2 id='about-blog'>About Blog</h2>
+  <p>Website history:</p>
+  <Timeline
+    events={[
+      {
+        date: '2026-02-27',
+        content:
+          'Website refactored using <a href="https://github.com/cworld1/astro-theme-pure" target="_blank">Astro Theme Pure</a>. Thanks to <a href="https://axi404.top/" target="_blank">Axi</a>.'
+      }
+    ]}
+  />
+  <p>
+    The website also relies on resources and technical support from the following projects and
+    service providers:
+  </p>
+  <ul>
+    <li>Domain and hosting: <a href='https://vercel.com/' target='_blank'>Vercel</a></li>
+    <li>
+      Framework and theme: <a href='https://astro.build/' target='_blank'>Astro</a> + <a
+        href='https://github.com/cworld1/astro-theme-pure'
+        target='_blank'>Astro Theme Pure</a
+      >
+    </li>
+    <li>Comment system: <a href='https://waline.js.org' target='_blank'>Waline</a></li>
+    <li>Statistics: <a href='https://supabase.com/' target='_blank'>Supabase</a></li>
+  </ul>
+</PageLayout>

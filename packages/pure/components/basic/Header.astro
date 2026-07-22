@@ -4,15 +4,28 @@ import config from 'virtual:config'
 import { Icon } from '../user'
 
 import { getBlogCollection, getUniqueCategories } from '../../utils/server'
+import {
+  getBlogIndexPath,
+  getCategoryPath,
+  getLanguageSwitchHref,
+  getLocaleFromPathname,
+  getPostsByLocale,
+  ui,
+  withLocale,
+} from '../../utils/i18n'
 
 const allPosts = await getBlogCollection()
-const allCategories = getUniqueCategories(allPosts)
+const locale = getLocaleFromPathname(Astro.url.pathname)
+const targetLocaleHref = getLanguageSwitchHref(Astro.url.pathname, allPosts)
+const localeText = ui[locale]
+const localizedPosts = getPostsByLocale(allPosts, locale)
+const allCategories = getUniqueCategories(localizedPosts)
 
 const categoryMap: Record<string, string> = {
-  Research: 'Research',
-  Technical: 'Technical',
-  Daily: 'Daily',
-  Essays: 'Essays'
+  Research: localeText.categories.Research,
+  Technical: localeText.categories.Technical,
+  Daily: localeText.categories.Daily,
+  Essays: localeText.categories.Essays
 }
 
 const categoryOrder = ['Research', 'Technical', 'Daily', 'Essays']
@@ -23,6 +36,12 @@ const categories = categoryOrder
   .filter((c) => normalizedCategories.includes(c.toLowerCase()))
   .map((c) => ({ slug: c, name: categoryMap[c] || c }))
 
+const menuItems = config.header.menu.map((item) => ({
+  ...item,
+  title: localeText.nav[item.title as keyof typeof localeText.nav] || item.title,
+  originalTitle: item.title,
+  link: withLocale(item.link, locale)
+}))
 
 ---
 
@@ -32,7 +51,7 @@ const categories = categoryOrder
   <a
     class='z-30 text-xl font-medium group-[.not-top]:ms-2 sm:group-[.not-top]:ms-3'
     style='transition:margin-inline 0.3s'
-    href='/'
+    href={withLocale('/', locale)}
     aria-label='Brand'>{config.title}</a
   >
 
@@ -44,13 +63,13 @@ const categories = categoryOrder
     >
       <div class='flex flex-col items-center justify-center max-sm:w-full max-sm:items-stretch max-sm:overflow-hidden sm:flex-row sm:overflow-visible'>
       {
-        config.header.menu.map((item) => {
-          const isBlogMenu = item.title === 'Blog'
+        menuItems.map((item) => {
+          const isBlogMenu = item.originalTitle === 'Blog'
           if (isBlogMenu && categories.length > 0) {
             return (
               <div class='menu-item-with-dropdown relative w-full sm:w-fit'>
                 <a
-                  href='/blog'
+                  href={getBlogIndexPath(locale)}
                   class='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
                   aria-label='Nav menu item'
                 >
@@ -60,7 +79,7 @@ const categories = categoryOrder
 
                 <div class='dropdown-menu max-sm:hidden'>
                   {categories.map((category) => (
-                    <a class='category-link' href={`/blog/category/${category.slug}`}>
+                    <a class='category-link' href={getCategoryPath(category.slug, locale)}>
                       {category.name}
                     </a>
                   ))}
@@ -68,7 +87,7 @@ const categories = categoryOrder
                 <ul class='mobile-category-list sm:hidden'>
                   {categories.map((category) => (
                     <li>
-                      <a class='category-link' href={`/blog/category/${category.slug}`}>
+                      <a class='category-link' href={getCategoryPath(category.slug, locale)}>
                         {category.name}
                       </a>
                     </li>
@@ -90,8 +109,8 @@ const categories = categoryOrder
       }
 
         <div class='flex w-full grow flex-row justify-end gap-x-3 sm:w-fit sm:gap-x-5'>
-          <a class='px-1 py-2 transition-none sm:px-2' href='/search' title='Search'>
-            <span class='sr-only'>Search</span>
+          <a class='px-1 py-2 transition-none sm:px-2' href={withLocale('/search', locale)} title={localeText.nav.Search}>
+            <span class='sr-only'>{localeText.nav.Search}</span>
             <Icon name='search' class='size-5' />
           </a>
         </div>
@@ -100,6 +119,15 @@ const categories = categoryOrder
 
     {/* buttons */}
     <div class='z-30 flex gap-x-4 group-[.not-top]:gap-x-2' style='transition:gap 0.3s'>
+      <a
+        id='toggleLanguage'
+        href={targetLocaleHref}
+        title={localeText.switchLanguageTitle}
+        aria-label={localeText.switchLanguageTitle}
+        class='box-content inline-flex size-5 items-center justify-center rounded-md border p-1.5 text-sm font-medium transition-colors hover:bg-border sm:group-[.not-top]:rounded-xl'
+      >
+        <span aria-hidden='true'>{localeText.code}</span>
+      </a>
       <button
         id='toggleDarkMode'
         class='group/dark box-content size-5 rounded-md border p-1.5 transition-colors hover:bg-border sm:group-[.not-top]:rounded-xl'

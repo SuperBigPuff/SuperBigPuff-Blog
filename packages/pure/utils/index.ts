@@ -10,6 +10,9 @@ export { cn } from './class-merge'
 // Date
 export { getFormattedDate } from './date'
 
+// I18n
+export * from './i18n'
+
 // Theme
 export { getTheme, listenThemeChange, setTheme } from './theme'
 

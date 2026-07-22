@@ -1,0 +1,43 @@
+---
+import PageLayout from '@/layouts/CommonPage.astro'
+import ProjectSection from '@/components/projects/ProjectSection.astro'
+
+const headings = [
+  { depth: 2, slug: 'programs', text: 'Programs' },
+  { depth: 2, slug: 'learnings', text: 'Learning Projects' },
+  { depth: 2, slug: 'others', text: 'Others' }
+]
+---
+
+<PageLayout title='Projects' {headings} view>
+  <h2 id='programs'>Programs</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: 'RK3588 Fitness Coach',
+        description:
+          'A fitness coach built with RK3588 and AI models, providing personalized guidance and real-time feedback.',
+        links: [{ type: 'github', href: 'https://github.com/SuperBigPuff/AI-robot' }]
+      }
+    ]}
+  />
+
+  <h2 id='learnings'>Learning Projects</h2>
+  <ProjectSection
+    class='my-2'
+    projects={[
+      {
+        name: 'XDU EE Materials',
+        description: 'Notes and slides for Xidian University electronic engineering courses.',
+        links: [{ type: 'github', href: 'https://github.com/SuperBigPuff/XDU-EE-Material' }]
+      },
+      {
+        name: 'CS 61C Learning',
+        description: 'Notes, lab code, and learning experiences from CS 61C.',
+        links: [{ type: 'github', href: 'https://github.com/SuperBigPuff/CS61C-labs' }]
+      }
+    ]}
+  />
+
+  <h2 id='others'>Others</h2>
+</PageLayout>

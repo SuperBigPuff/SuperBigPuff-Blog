@@ -1,6 +1,6 @@
 ---
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import { getReadingTime } from 'astro-pure/utils'
+import { getLocaleFromPathname, getPostsByLocale, getReadingTime } from 'astro-pure/utils'
 import { Icon } from 'astro-pure/user'
 
 
@@ -11,7 +11,8 @@ interface BlogStatsProps {
 const { blogStartDate } = Astro.props as BlogStatsProps
 const startDate = blogStartDate
 
-const allPosts = await getBlogCollection()
+const locale = getLocaleFromPathname(Astro.url.pathname)
+const allPosts = getPostsByLocale(await getBlogCollection(), locale)
 const sortedPosts = sortMDByDate(allPosts)
 
 const today = new Date()

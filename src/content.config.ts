@@ -34,6 +34,9 @@ const blog = defineCollection({
         })
         .optional(),
       tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+      lang: z.enum(['zh', 'en']).default('zh'),
+      slug: z.string().optional(),
+      translationKey: z.string().optional(),
       language: z.string().optional(),
       draft: z.boolean().default(false),
       // Special fields

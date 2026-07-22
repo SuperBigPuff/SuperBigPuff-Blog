@@ -3,7 +3,7 @@ import type { CollectionKey, InferEntrySchema } from 'astro:content'
 
 import config from 'virtual:config'
 
-import { cn, getFormattedDate } from '../../utils'
+import { cn, getFormattedDate, getLocaleFromPathname, withLocale } from '../../utils'
 import { QRCode } from '../advanced'
 import { Icon } from '../user'
 
@@ -18,13 +18,15 @@ const {
 } = Astro.props
 
 const image = typeof heroImage?.src === 'string' ? heroImage?.src : (heroImage?.src?.src ?? '')
+const locale = getLocaleFromPathname(Astro.url.pathname)
+const author = locale === 'en' ? 'SuperBigPuff' : config.author
 
 const shares = {
   weibo: {
     link: `http://service.weibo.com/share/share.php?url=${Astro.url}&title=${title}&pic=${image}`
   },
   x: {
-    link: `https://x.com/intent/tweet?text='${title}'&url='${Astro.url}'&via='${config.author}'`
+    link: `https://x.com/intent/tweet?text='${title}'&url='${Astro.url}'&via='${author}'`
   },
   bluesky: {
     link: `https://bsky.app/intent/compose?text=${title}%0A${Astro.url}`
@@ -50,7 +52,7 @@ const shares = {
   <div class='flex flex-row flex-wrap justify-start gap-x-5 gap-y-1 sm:gap-x-8'>
     <div class='flex gap-x-2 sm:flex-col'>
       <span>Author</span>
-      <span class='text-sm text-foreground max-sm:place-self-center'>{config.author}</span>
+      <span class='text-sm text-foreground max-sm:place-self-center'>{author}</span>
     </div>
     {
       publishDate && (
@@ -115,7 +117,7 @@ const shares = {
 
 <div class='mx-6 rounded-b-xl border border-t-0 px-3 pb-1.5 pt-1 sm:mx-8 sm:px-4'>
   <a
-    href='/projects#sponsorship'
+    href={`${withLocale('/projects', locale)}#sponsorship`}
     class='flex items-center justify-between text-muted-foreground no-underline'
     target='_blank'
   >

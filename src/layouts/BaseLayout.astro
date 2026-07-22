@@ -1,6 +1,7 @@
 ---
 import { Footer, Header, ThemeProvider } from 'astro-pure/components/basic'
 import type { SiteMeta } from 'astro-pure/types'
+import { getLocaleFromPathname, ui } from 'astro-pure/utils'
 import BaseHead from '@/components/BaseHead.astro'
 import config from '@/site-config'
 
@@ -19,9 +20,10 @@ const {
   highlightColor,
   ...props
 } = Astro.props
+const locale = getLocaleFromPathname(Astro.url.pathname)
 ---
 
-<html lang={config.locale.lang}>
+<html lang={ui[locale].htmlLang}>
   <head>
     <BaseHead {articleDate} {description} {ogImage} {title} />
     <ThemeProvider />
@@ -228,7 +230,13 @@ const {
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        function createParticle(x, y, angle, distance, colorIndex) {
+        function createParticle(
+          x: number,
+          y: number,
+          angle: number,
+          distance: number,
+          colorIndex: number
+        ) {
           const particle = document.createElement('div')
           particle.className = `click-particle color-${colorIndex}`
           const dx = Math.cos(angle) * distance

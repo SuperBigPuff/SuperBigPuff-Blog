@@ -5,6 +5,7 @@ import { Quote } from 'astro-pure/advanced'
 import { PostPreview } from 'astro-pure/components/pages'
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Button, Card, Icon, Label, Spoiler } from 'astro-pure/user'
+import { getPostsByLocale } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import ProjectCard from '@/components/home/ProjectCard.astro'
 import Section from '@/components/home/Section.astro'
@@ -21,7 +22,7 @@ const frontend = ['TypeScript', 'Vite', 'Webpack', 'Astro']
 const backend = ['Vercel', 'Waline']
 
 const MAX_POSTS = 5
-const allPosts = await getBlogCollection()
+const allPosts = getPostsByLocale(await getBlogCollection(), 'zh')
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
 const githubUsername = 'SuperBigPuff' 

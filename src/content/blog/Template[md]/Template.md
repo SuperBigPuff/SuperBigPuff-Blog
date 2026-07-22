@@ -11,7 +11,9 @@ heroImage:
   alt: '文章封面'
   color: '#B4C6DA'
 draft: false
+lang: zh
 language: 'zh-CN'
+translationKey: 'markdown-template'
 comment: true
 ---
 

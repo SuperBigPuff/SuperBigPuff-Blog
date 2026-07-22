@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets'
 import { type CollectionEntry, type CollectionKey, render } from 'astro:content'
 
-import { cn } from '../../utils'
+import { cn, getPostLocale, getPostPath, getTagPath } from '../../utils'
 import { Button, FormattedDate, Icon } from '../user'
 
 type Props<T extends CollectionKey> = {
@@ -12,9 +12,10 @@ type Props<T extends CollectionKey> = {
 }
 
 const { post, detailed = false, class: className } = Astro.props
-const { id, data } = post
+const { data } = post
 const { remarkPluginFrontmatter } = await render(post)
 const postDate = data.updatedDate ?? data.publishDate
+const locale = getPostLocale(post as CollectionEntry<'blog'>)
 ---
 
 <li
@@ -30,7 +31,7 @@ const postDate = data.updatedDate ?? data.publishDate
       detailed && 'max-sm:px-4 sm:py-5',
       detailed && data.heroImage && 'max-md:pt-24'
     )}
-    href={`/blog/${id}`}
+    href={getPostPath(post as CollectionEntry<'blog'>)}
     data-astro-prefetch
   >
     {
@@ -108,7 +109,7 @@ const postDate = data.updatedDate ?? data.publishDate
                 <ul class='tag-list mt-1 flex gap-2'>
                   {data.tags.map((tag: string) => (
                     <li>
-                      <Button as='a' title={tag} href={`/tags/${tag}`} variant='pill' />
+                      <Button as='a' title={tag} href={getTagPath(tag, locale)} variant='pill' />
                     </li>
                   ))}
                 </ul>

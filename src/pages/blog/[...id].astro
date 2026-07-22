@@ -2,14 +2,17 @@
 import { type CollectionEntry, render } from 'astro:content'
 
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { getPostSlug, getPostsByLocale } from 'astro-pure/utils'
 import PostLayout from '@/layouts/BlogPost.astro'
 
 export const prerender = true
 
 export async function getStaticPaths() {
-  const posts = sortMDByDate(await getBlogCollection())
+  const routeLocale = 'zh'
+  const posts = sortMDByDate(getPostsByLocale(await getBlogCollection(), routeLocale))
+
   return posts.map((post) => ({
-    params: { id: post.id },
+    params: { id: getPostSlug(post) },
     props: { post, posts }
   }))
 }

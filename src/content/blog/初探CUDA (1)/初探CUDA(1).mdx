@@ -11,7 +11,9 @@ heroImage:
   alt: '文章封面'
   color: '#B4C6DA'
 draft: false
+lang: zh
 language: 'zh-CN'
+translationKey: 'cuda-first-look-1'
 comment: true
 ---
 
@@ -119,4 +121,3 @@ cudaError_t cudaMemcpy(void* dst, const void* src, size_t count, cudaMemcpyKind 
 __shared__ int smem[256];
 ```
 可以使用该方式分配共享显存。需要注意的是，共享显存为一个SM处理器所占有，因此在运用时需要注意开的大小和Block内的线程数量需要进行对齐
-
