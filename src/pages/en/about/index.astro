@@ -19,14 +19,36 @@ const headings = [
     technical notes, interesting things I encounter, and moments from everyday life.
   </p>
   <p>Motto: Stay focused, Stay alive.</p>
-  <Button title='View my projects' class='w-fit' href='/en/projects' variant='ahead' />
+  <!-- <Button title='View my projects' class='w-fit' href='/en/projects' variant='ahead' /> -->
 
   <h2 id='hobbies'>Hobbies</h2>
-  <ul>
-    <li>Computer architecture and hardware acceleration.</li>
-    <li>Music, concerts, and games.</li>
-    <li>Writing down ideas before they disappear.</li>
-  </ul>
+  <p>What I love:</p>
+  <ToolSection
+    class='mb-5'
+    title=''
+    tools={[
+      {
+        name: 'Tennis',
+        description: 'Something elegant',
+        icon: import('@/assets/tools/tennis.svg?raw')
+      },
+      {
+        name: 'Photography',
+        description: 'Sony Alpha 7C II & Tamron 28-75mm F2.8 G2',
+        icon: import('@/assets/tools/photo.svg?raw')
+      },
+      {
+        name: 'Running',
+        description: 'Release your mind',
+        icon: import('@/assets/tools/running.svg?raw')
+      },
+      {
+        name: 'Movies',
+        description: 'See the world',
+        icon: import('@/assets/tools/movies.svg?raw')
+      }
+    ]}
+  />
 
   <h2 id='tools'>Tools</h2>
   <p>Tools I currently use:</p>

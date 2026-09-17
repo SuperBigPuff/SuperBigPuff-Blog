@@ -11,7 +11,7 @@ interface Props {
   tools: {
     name: string
     description: string
-    href: string
+    href?: string
     icon: Promise<typeof import('*.svg?raw')> | ImageMetadata
     darkIcon?: Promise<typeof import('*.svg?raw')> | ImageMetadata
   }[]
@@ -34,7 +34,7 @@ function isImageMetadata(obj: unknown): obj is ImageMetadata {
       tools.map((tool) => (
         <a
           class='group relative text-sm leading-normal no-underline'
-          href={tool.href}
+          href={tool.href || undefined}
           id={tool.name}
           target='_blank'
         >

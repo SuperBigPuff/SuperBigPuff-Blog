@@ -7,8 +7,6 @@ import ToolSection from '@/components/about/ToolSection.astro'
 const headings = [
   { depth: 2, slug: 'hobbies', text: 'Hobbies' },
   { depth: 2, slug: 'tools', text: 'Tools' },
-  { depth: 2, slug: 'social-networks', text: 'Social Networks' },
-  { depth: 2, slug: 'gossips', text: 'Gossips' },
   { depth: 2, slug: 'about-blog', text: 'About Blog' }
 ]
 ---
@@ -21,19 +19,37 @@ const headings = [
   <p>
      Motto: Stay focused, Stay alive. <!--<Spoiler>这里可以夹私货，比如为什么要演奏春日影！</Spoiler> -->
   </p>
-  <Button title='Sponsor Me' class='w-fit' href='/projects#sponsorship' variant='ahead' />
+  <!-- <Button title='Sponsor Me' class='w-fit' href='/projects#sponsorship' variant='ahead' /> -->
 
   {/* general-talk */}
   <h2 id='hobbies'>Hobbies</h2>
-  <ul>
-    <li>Lorem ipsum dolor sit amet, vidit suscipit at mei.</li>
-    <li>
-      Quem denique mea id. Usu ei regione indoctum dissentiunt, cu meliore fuisset mei, vel quod
-      voluptua ne.
-    </li>
-    <li>Ex dicat impedit mel, at eum oratio possit voluptatum.</li>
-    <li>Impetus fuisset ullamcorper pri cu, his posse iisque ad, aliquam honestatis usu id.</li>
-  </ul>
+  <p>What I love:</p>
+  <ToolSection
+    class='mb-5'
+    title=''
+    tools={[
+      {
+        name: 'Tennis',
+        description: 'Something elegant',
+        icon: import('@/assets/tools/tennis.svg?raw')
+      },
+      {
+        name: 'Photography',
+        description: 'Sony Alpha 7C II & Tamron 28-75mm F2.8 G2',
+        icon: import('@/assets/tools/photo.svg?raw')
+      },
+      {
+        name: 'Running',
+        description: 'Release your mind',
+        icon: import('@/assets/tools/running.svg?raw')
+      },
+      {
+        name: 'Movies',
+        description: 'See the world',
+        icon: import('@/assets/tools/movies.svg?raw')
+      }
+    ]}
+  />
 
   {/* tools */}
   <h2 id='tools'>Tools</h2>
