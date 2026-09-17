@@ -23,10 +23,13 @@ const { class: className, events, ...props } = Astro.props
               style={{ height: 'calc(100% - 4px)' }}
             />
           )}
-          <div class='flex gap-2 max-sm:flex-col'>
-            <samp class='w-fit grow-0 rounded-md py-1 text-sm max-sm:bg-card max-sm:px-2 sm:min-w-[82px] sm:text-right'>
+          <div class='flex min-w-0 flex-1 gap-2 max-sm:flex-col'>
+            <time
+              datetime={event.date}
+              class='w-fit shrink-0 whitespace-nowrap rounded-md py-1 font-mono text-sm tabular-nums max-sm:bg-card max-sm:px-2 sm:w-[10ch] sm:min-w-[10ch] sm:text-left'
+            >
               {event.date}
-            </samp>
+            </time>
             <div>
               <Fragment set:html={event.content} />
             </div>
