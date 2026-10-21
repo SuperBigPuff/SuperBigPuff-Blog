@@ -1,0 +1,42 @@
+﻿---
+title: 'Notion 模板'
+description: 'Notion 模版发布'
+publishDate: '2026-10-21'
+updatedDate: '2026-10-21'
+category: Technical
+tags:
+  - template
+heroImage:
+  src: './Notion.jpg'
+  alt: '文章封面'
+  color: '#B4C6DA'
+draft: false
+lang: zh
+language: 'zh-CN'
+translationKey: 'Notion'
+comment: true
+---
+
+import {
+  Aside, Tabs, TabItem, Steps, MdxRepl, Card, Collapse, CardList, Timeline,
+  Button, Spoiler, FormattedDate, Label, Svg, Icon
+} from 'astro-pure/user'
+import { Quote, GithubCard, LinkPreview, QRCode, MediumZoom } from 'astro-pure/advanced'
+import { Icons as allIcons } from 'astro-pure/libs'
+import { Comment } from '@/components/waline'
+import { Code } from 'astro:components'
+import { Image } from 'astro:assets'
+
+export const cardListData = [
+  { title: '文档链接', link: '/docs' },
+  { title: '二级目录', children: [{ title: '子项', link: '/docs/integrations/components' }] }
+]
+
+export const timelineData = [
+  { date: '2026-02-20', content: '开始写作' },
+  { date: '2026-02-27', content: '发布文章' }
+]
+
+<Aside type='tip' title='Tips'>
+我发布了一个 Notion 模版，[这里是链接!](https://www.notion.com/zh-cn/templates/student-planner-os)
+</Aside>
